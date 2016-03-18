@@ -1,0 +1,13 @@
+<div class="drillView">
+    <div ng-show="!drill">Not Found</div>
+    <div class="drillName">{{drill.name}}</div>
+    <div>{{drill.group}} - {{drill.category}} - Level {{drill.level}}</div>
+    <div>{{drill.notes}}</div>
+    <div ng-show="stats.high > 0">Score: Last({{stats.last}}); High({{stats.high}}); Low({{stats.low}}); Avg({{stats.avg}})</div>
+    <div>
+        <button ng-click="edit()">Edit</button>
+        <button ng-click="score()">Score</button>
+        <button ng-click="history()">History</button>
+    </div>
+    <img style="width: 100%" ng-show="drill.diagram" src="http://pad.chalkysticks.com/image/{{drill.diagram}}">
+</div>

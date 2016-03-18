@@ -1,0 +1,17 @@
+<div class="drillEdit">
+    <div>Drill: {{drill.name}}</div>
+    <table>
+        <tr>
+            <td>Attempts:</td>
+            <td><input type="number" ng-model="attempts"></td>
+        </tr>
+        <tr>
+            <td>Score:</td>
+            <td><input type="number" ng-model="score"></td>
+        </tr>
+    </table>
+    <div>
+        <button ng-click="save()">Save</button>
+        <button ng-click="cancel()">Cancel</button>
+    </div>
+</div>

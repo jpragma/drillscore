@@ -1,0 +1,19 @@
+<div class="drillEdit">
+    <div>Drill: {{drill.name}}</div>
+    <table border="1">
+        <tr>
+            <th>Date</th>
+            <th>Attempts</th>
+            <th>Score</th>
+            <th>Avg</th>
+            <th>Action</th>
+        </tr>
+        <tr ng-repeat="h in drill.history">
+            <td>{{h.date | date : 'short' : 'EST'}}</td>
+            <td>{{h.attempts}}</td>
+            <td>{{h.score}}</td>
+            <td>{{h.score / h.attempts}}</td>
+            <td><a href="" ng-click="deleteHistory(h)">Delete</a></td>
+        </tr>
+    </table>
+</div>

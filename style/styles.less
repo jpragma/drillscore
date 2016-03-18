@@ -1,0 +1,109 @@
+@myBlue: #2e13e9;
+a {
+  text-decoration: none;
+}
+body {
+  background-color: black;
+  color: white;
+  text-align: center;
+}
+input,button,select,textarea {
+  color: #000000;
+}
+.view {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.divBtn {
+  display: block;
+  vertical-align: middle;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+
+.bigBtn:extend(.divBtn) {
+  font-size: 24px;
+  width: 200px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 10px;
+}
+
+.smallBtn:extend(.divBtn) {
+  font-size: 12px;
+  width: 100px;
+  height: 20px;
+  line-height: 20px;
+  border-radius: 5px;
+}
+
+.bigBlueBtn:extend(.bigBtn) {
+  border: 1px solid #140e66;
+  background-color: @myBlue;
+  color: white;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.smallBlueBtn:extend(.smallBtn) {
+  border: 1px solid #140e66;
+  background-color: @myBlue;
+  color: white;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bigGreenBtn:extend(.bigBlueBtn) {
+  border: 1px solid #ffffff;
+  background-color: green;
+}
+
+.fullScreenTable {
+  width: 100%;
+  text-align: left;
+  td {
+    padding-bottom: 10px;
+  }
+  input {
+    color: black;
+  }
+  input[type='text'] {
+    width: 100%;
+  }
+}
+
+.drillList {
+  td {
+    padding-right: 20px;
+  }
+  .drillName {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  a {
+    text-decoration: none;
+    color: #ffffff;
+  }
+}
+
+.drillView {
+  .drillName {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  img {
+    margin-top: 10px;
+  }
+}
+
+.rawData {
+  span {
+    margin-top: 10px;
+  }
+  textarea {
+    margin-top: 10px;
+    width: 100%;
+    height: 300px;
+  }
+}
