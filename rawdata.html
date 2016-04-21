@@ -1,7 +1,7 @@
 <div class="rawData">
-    <h3>{{exporting ? 'Export' : 'Import'}} data</h3>
-    <span ng-show="!exporting" ng-click="deleteAll()"class="bigBlueBtn">Delete All</span>
-    <span ng-show="!exporting" ng-click="importData()" class="bigGreenBtn">Import</span>
-    <textarea ng-model="rawdata">
+    <h3>Export/Import data</h3>
+    <span ng-click="deleteAll()"class="bigBlueBtn">Delete All</span>
+    <span ng-click="importData()" class="bigGreenBtn">Import</span>
+    <textarea ng-model="rawdata" select-on-click>
     </textarea>
 </div>

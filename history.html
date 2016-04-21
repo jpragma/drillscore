@@ -3,13 +3,15 @@
     <table border="1">
         <tr>
             <th>Date</th>
+            <th>Table</th>
             <th>Attempts</th>
             <th>Score</th>
             <th>Avg</th>
             <th>Action</th>
         </tr>
         <tr ng-repeat="h in drill.history">
-            <td>{{h.date | date : 'short' : 'EST'}}</td>
+            <td><a href="#/score/{{drill.id}}/0">{{h.date | date : 'short' : 'EST'}}</a></td>
+            <td>{{h.table}}</td>
             <td>{{h.attempts}}</td>
             <td>{{h.score}}</td>
             <td>{{h.score / h.attempts}}</td>

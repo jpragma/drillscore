@@ -1,24 +1,27 @@
 <div class="drillList">
-    <select ng-model="sGroup" ng-change="sCategory=null" ng-options="group for group in groups">
-        <option value="">All</option>
-    </select>
-    <select ng-model="sCategory" ng-options="cat for cat in getCategories(sGroup)">
-        <option value="">All</option>
-    </select>
-    <button ng-click="load()">Load</button>
-    <br/>
     <button ng-click="newDrill()">New</button>
     <button ng-click="raw()">Raw</button>
+    <hr/>
+    <span>Group:</span>
+    <select ng-model="sGroup" ng-change="load()" ng-options="group for group in groups">
+        <option value="">All</option>
+    </select>
+    <br/>
+    <span>Tag:</span>
+    <select ng-model="sTag" ng-change="load()" ng-options="tag for tag in tags">
+        <option value="">All</option>
+    </select>
+    <hr/>
     <div ng-repeat="drill in drills">
         <table><tr>
-            <td><a href="#/drill/{{drill.id}}">
-                <img style="width: 150px" src="http://pad.chalkysticks.com/image/{{drill.diagram}}">
+            <td style="width: 150px"><a href="#/drill/{{drill.id}}">
+                <span ng-show="!drill.diagram">N/A</span>
+                <img ng-show="drill.diagram" style="width: 150px" src="http://pad.chalkysticks.com/image/{{drill.diagram}}">
             </a></td>
             <td><a href="#/drill/{{drill.id}}">
                 <div class="drillName">{{drill.name}}</div>
-                <div>{{drill.category}}</div>
-                <div>{{drill.subcategory}}</div>
-                <div>Level {{drill.level}}</div>
+                <div>{{drill.group}}</div>
+                <div>Tags:<span ng-repeat="tag in drill.tags">{{tag.text}}{{$last ? '' : ', '}}</span></div>
                 <div>{{drill.date | date}}</div>
             </a></td>
         </tr></table>

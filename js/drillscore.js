@@ -1,14 +1,16 @@
-var app = angular.module('drillApp', ['ngRoute','ui.bootstrap', 'LocalStorageModule']);
+var app = angular.module('drillApp', ['ngRoute','ui.bootstrap', 'LocalStorageModule', 'ngTagsInput']);
 app.uid = function() {
     return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4);
 };
 app.toJsonString = function (obj) {
-    if (obj == null)
+    if (obj == null) {
         return null;
-    else if (typeof  obj === 'object')
+    } else if (typeof  obj === 'object') {
+        delete obj.$$hashKey;
         return JSON.stringify(obj);
-    else
+    } else {
         return obj.toString();
+    }
 };
 app.fromJsonString = function (obj) {
     if (obj == null)
@@ -18,6 +20,17 @@ app.fromJsonString = function (obj) {
     else
         return obj;
 };
+app.directive('selectOnClink', ['$window', function ($window) {
+    return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+            element.on('click', function () {
+                if (!$window.getSelection().toString())
+                    this.setSelectionRange(0, this.value.length);
+            });
+        }
+    }
+}]);
 
 app.config(function($routeProvider){
     $routeProvider.
@@ -25,7 +38,7 @@ app.config(function($routeProvider){
         when('/drills', {templateUrl: 'drillList.html', controller: 'drillListController'}).
         when('/edit/:id?', {templateUrl: 'drillEdit.html', controller: 'drillEditController'}).
         when('/drill/:id', {templateUrl: 'drillView.html', controller: 'drillViewController'}).
-        when('/score/:id', {templateUrl: 'score.html', controller: 'scoreController'}).
+        when('/score/:id/:idx?', {templateUrl: 'score.html', controller: 'scoreController'}).
         when('/history/:id', {templateUrl: 'history.html', controller: 'scoreController'}).
         when('/rawdata/:export?', {templateUrl: 'rawdata.html', controller: 'rawDataController'}).
         otherwise({redirectTo: '/'});
@@ -76,45 +89,61 @@ app.factory('drillsService', function (localStorageService) {
 
 app.controller('drillListController', function ($scope, $location, drillsService) {
     var drills = drillsService.drills;
+    if (drillsService.selectedGroup) {
+        $scope.sGroup = drillsService.selectedGroup;
+    }
+    if (drillsService.selectedTag) {
+        $scope.sTag = drillsService.selectedTag;
+    }
+
     var groups = {};
+    var tags={};
     drills.forEach(function (drill) {
         groups[drill.group] = null;
+        if (drill.tags) {
+            drill.tags.forEach(function (tag) {
+                tags[tag.text] = null;
+            });
+        }
     });
     $scope.groups = Object.keys(groups);
+    $scope.tags = Object.keys(tags);
 
-    $scope.getCategories = function (group) {
-        if (group) {
-            var c = {};
-            drills.forEach(function (drill) {
-                if (drill.group == group) c[drill.category] = null;
-            });
-            return Object.keys(c);
-        }
-    };
 
     $scope.load = function() {
-        if (!$scope.sGroup) {
+        if (!$scope.sGroup && !$scope.sTag) {
             $scope.drills = drills;
         } else {
             var result = [];
             drills.forEach(function (drill) {
-                if (drill.group == $scope.sGroup) {
-                    if (!$scope.sCategory || drill.category == $scope.sCategory) {
+                if (!$scope.sGroup || drill.group == $scope.sGroup) {
+                    if (!$scope.sTag) {
                         result.push(drill);
+                    } else if (drill.tags) {
+                        var added = false;
+                        drill.tags.forEach(function (tag) {
+                            if (tag.text == $scope.sTag && !added) {
+                                result.push(drill);
+                                added = true;
+                            }
+                        });
                     }
                 }
             });
             $scope.drills = result;
+            drillsService.selectedGroup = $scope.sGroup;
+            drillsService.selectedTag = $scope.sTag;
         }
     };
 
     $scope.newDrill = function () {
-        drillsService.newDrill = {group: $scope.sGroup, category: $scope.sCategory, level: 1, history: []};
+        drillsService.newDrill = {group: $scope.sGroup, level: 1, history: []};
         $location.path('/edit');
     };
     $scope.raw = function() {
         $location.path('/rawdata');
     };
+    $scope.load();
 
 });
 
@@ -134,6 +163,9 @@ app.controller('drillViewController', function ($scope, $routeParams, $location,
     });
     $scope.stats.avg = sum / cnt;
 
+    $scope.backToList = function() {
+        $location.path('/drills');
+    };
     $scope.edit = function() {
         $location.path('/edit/' + drillId);
     };
@@ -159,6 +191,9 @@ app.controller('drillEditController', function ($scope, $routeParams, $location,
             drillsService.add($scope.drill);
         }
         drillsService.save();
+        $scope.backToDrillView();
+    };
+    $scope.backToDrillView = function() {
         $location.path('/drill/' + $scope.drill.id);
     };
     $scope.remove = function() {
@@ -170,10 +205,20 @@ app.controller('drillEditController', function ($scope, $routeParams, $location,
 
 app.controller('scoreController', function ($scope, $routeParams, $location, drillsService) {
     var drillId = $routeParams.id;
+    var historyIdx = $routeParams.idx;
     $scope.drill = drillsService.getDrill(drillId);
+    if (historyIdx) {
+        $scope.historyEntry = $scope.drill.history[historyIdx];
+    } else {
+        $scope.historyEntry = {date: new Date(), table: 7, attempts: 1};
+    }
     $scope.attempts = 1;
     $scope.save = function() {
-        $scope.drill.history.push({date: new Date(), attempts: $scope.attempts, score: $scope.score});
+        if (historyIdx) {
+            $scope.drill.history[historyIdx] = $scope.historyEntry;
+        } else {
+            $scope.drill.history.push($scope.historyEntry);
+        }
         drillsService.save();
         $location.path('/drill/' + drillId);
     };
@@ -192,28 +237,35 @@ app.controller('scoreController', function ($scope, $routeParams, $location, dri
 });
 
 app.controller('rawDataController', function ($scope, $routeParams, $location, drillsService) {
-    if ($routeParams.export) {
-        $scope.rawdata = app.toJsonString(drillsService.drills);
-        $scope.exporting = true;
-    }
+    $scope.rawdata = app.toJsonString(drillsService.drills);
 
     $scope.deleteAll = function() {
         if (confirm("Delete All Data?")) {
             drillsService.removeAll();
             drillsService.save();
+            $location.path('/');
         }
     };
 
     $scope.importData = function () {
-        var data = app.fromJsonString($scope.rawdata);
+        var backup = drillsService.drills;
+        try {
+            var data = app.fromJsonString($scope.rawdata);
+        } catch (e) {
+            alert("Error parsing data " + e.message);
+            return;
+        }
+
         if (!Array.isArray(data)) {
             alert("Invalid data");
             return;
         }
+        drillsService.removeAll();
         for (var i=0; i<data.length; i++) {
             var drill = data[i];
             if (!drill.name || !drill.group) {
                 alert("Invalid data");
+                drillsService.drills = backup;
                 return;
             }
             drillsService.add(drill);

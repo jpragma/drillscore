@@ -9,8 +9,8 @@
             <td><input type="text" ng-model="drill.group"></td>
         </tr>
         <tr>
-            <td>Category:</td>
-            <td><input type="text" ng-model="drill.category"></td>
+            <td>Tags:</td>
+            <td><tags-input ng-model="drill.tags" style="width: 220px"></tags-input></td>
         </tr>
         <tr>
             <td>Level:</td>
@@ -23,12 +23,13 @@
         <tr>
             <td>Notes:</td>
             <td>
-                <textarea ng-model="drill.notes" cols="21" rows="3"></textarea>
+                <textarea ng-model="drill.notes" style="width: 220px; height: 150px"></textarea>
             </td>
         </tr>
 
     </table>
-    <button ng-click="save()" ng-disabled="!drill.name || !drill.group || !drill.category">Save</button>
+    <button ng-click="backToDrillView()">Cancel</button>
+    <button ng-click="save()" ng-disabled="!drill.name || !drill.group">Save</button>
     <button ng-click="remove()" ng-show="drill.id">Delete</button>
 
 </div>

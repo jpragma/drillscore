@@ -1,13 +1,21 @@
 <div class="drillEdit">
-    <div>Drill: {{drill.name}}</div>
+    <div class="drillName">{{drill.name}}</div>
     <table>
         <tr>
+            <td>Table Size:</td>
+            <td><input type="number" ng-model="historyEntry.table" min="7" max="12"></td>
+        </tr>
+        <tr>
             <td>Attempts:</td>
-            <td><input type="number" ng-model="attempts"></td>
+            <td><input type="number" ng-model="historyEntry.attempts"></td>
         </tr>
         <tr>
             <td>Score:</td>
-            <td><input type="number" ng-model="score"></td>
+            <td><input type="number" ng-model="historyEntry.score"></td>
+        </tr>
+        <tr>
+            <td>Notes:</td>
+            <td><textarea ng-model="historyEntry.notes"></textarea></td>
         </tr>
     </table>
     <div>
