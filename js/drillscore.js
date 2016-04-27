@@ -41,6 +41,7 @@ app.config(function($routeProvider){
         when('/score/:id/:idx?', {templateUrl: 'score.html', controller: 'scoreController'}).
         when('/history/:id', {templateUrl: 'history.html', controller: 'scoreController'}).
         when('/rawdata/:export?', {templateUrl: 'rawdata.html', controller: 'rawDataController'}).
+        when('/settings', {templateUrl: 'settings.html', controller: 'settingsController'}).
         otherwise({redirectTo: '/'});
 });
 
@@ -86,9 +87,29 @@ app.factory('drillsService', function (localStorageService) {
     return service;
 });
 
+app.factory('settingsService', function (localStorageService) {
+    var service = {
+        load: function() {
+            this.settings = localStorageService.get('settings');
+            if (this.settings == null) {
+                this.settings = {
+                    diagramUrlPattern: 'https://pad.chalkysticks.com/image',
+                    showInList: false,
+                    showInView: true
+                }
+            }
+        },
+        save: function() {
+            localStorageService.set('settings', this.settings);
+        }
+    }
+    service.load();
+    return service;
+});
 
-app.controller('drillListController', function ($scope, $location, drillsService) {
+app.controller('drillListController', function ($scope, $location, drillsService, settingsService) {
     var drills = drillsService.drills;
+    $scope.settings = settingsService.settings;
     if (drillsService.selectedGroup) {
         $scope.sGroup = drillsService.selectedGroup;
     }
@@ -147,8 +168,9 @@ app.controller('drillListController', function ($scope, $location, drillsService
 
 });
 
-app.controller('drillViewController', function ($scope, $routeParams, $location, drillsService) {
+app.controller('drillViewController', function ($scope, $routeParams, $location, drillsService, settingsService) {
     var drillId = $routeParams.id;
+    $scope.settings = settingsService.settings;
     $scope.drill = drillsService.getDrill(drillId);
     $scope.stats = {last:0, high:0, low:999999, avg:0};
     var sum = 0, cnt = 0;
@@ -271,6 +293,15 @@ app.controller('rawDataController', function ($scope, $routeParams, $location, d
             drillsService.add(drill);
         }
         drillsService.save();
+        $location.path('/');
+    };
+});
+
+app.controller('settingsController', function ($scope, $location, settingsService) {
+    $scope.settings = settingsService.settings;
+    $scope.save = function () {
+        settingsService.settings = $scope.settings;
+        settingsService.save();
         $location.path('/');
     };
 });

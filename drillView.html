@@ -13,6 +13,6 @@
         <button ng-click="score()">Score</button>
         <button ng-click="history()">History</button>
     </div>
-    <img style="width: 100%" ng-show="drill.diagram" src="http://pad.chalkysticks.com/image/{{drill.diagram}}">
+    <img style="width: 100%" ng-show="drill.diagram && settings.showInView" ng-src="{{settings.diagramUrlPattern}}/{{drill.diagram}}">
     <div>{{drill.notes}}</div>
 </div>

@@ -16,7 +16,7 @@
         <table><tr>
             <td style="width: 150px"><a href="#/drill/{{drill.id}}">
                 <span ng-show="!drill.diagram">N/A</span>
-                <img ng-show="drill.diagram" style="width: 150px" src="http://pad.chalkysticks.com/image/{{drill.diagram}}">
+                <img ng-show="drill.diagram && settings.showInList" style="width: 150px" ng-src="{{settings.diagramUrlPattern}}/{{drill.diagram}}">
             </a></td>
             <td><a href="#/drill/{{drill.id}}">
                 <div class="drillName">{{drill.name}}</div>
