@@ -297,11 +297,31 @@ app.controller('rawDataController', function ($scope, $routeParams, $location, d
     };
 });
 
-app.controller('settingsController', function ($scope, $location, settingsService) {
+app.controller('settingsController', function ($scope, $location, settingsService, drillsService) {
     $scope.settings = settingsService.settings;
     $scope.save = function () {
         settingsService.settings = $scope.settings;
         settingsService.save();
         $location.path('/');
+    };
+    $scope.preloadImages = function() {
+        if (!$scope.imageCache) {
+            $scope.imageCache = [];
+        }  
+        var img;
+        drillsService.drills.forEach(function (drill) {
+            if (drill.diagram) {
+                img = new Image();
+                img.onload = function() {
+                    var index = $scope.imageCache.indexOf(this);
+                    if (index !== -1) {
+                        $scope.imageCache.splice(index, 1);
+                    }
+                }
+                img.src = $scope.settings.diagramUrlPattern + "/" + drill.diagram;
+                $scope.imageCache.push(img);                
+            }
+        });
+        alert('Requested ' + $scope.imageCache.length + ' images');
     };
 });

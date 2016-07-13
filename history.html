@@ -14,7 +14,7 @@
             <td>{{h.table}}</td>
             <td>{{h.attempts}}</td>
             <td>{{h.score}}</td>
-            <td>{{h.score / h.attempts}}</td>
+            <td>{{(h.score / h.attempts) | number:2}}</td>
             <td><a href="" ng-click="deleteHistory(h)">Delete</a></td>
         </tr>
     </table>

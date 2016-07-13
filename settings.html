@@ -7,6 +7,9 @@
     <span>Show in View:</span>
     <input type="checkbox" ng-model="settings.showInView">
 
+    <span ng-click="preloadImages()" class="bigBlueBtn">Preload</span>
+    <div ng-show="preloadImages.length > 0">Preloading {{preloadImages.length}} images</div>
+    
     <span ng-click="save()" class="bigGreenBtn">Save</span>
 
 </div>
