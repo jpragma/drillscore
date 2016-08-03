@@ -2,11 +2,19 @@ var app = angular.module('drillApp', ['ngRoute','ui.bootstrap', 'LocalStorageMod
 app.uid = function() {
     return ("0000" + (Math.random()*Math.pow(36,4) << 0).toString(36)).slice(-4);
 };
+app.removeProp = function(obj, name) {
+    for (prop in obj) {
+        if (prop === name)
+            delete obj[prop];
+        else if (typeof obj[prop] === 'object')
+            app.removeProp(obj[prop], name);
+    }
+}
 app.toJsonString = function (obj) {
     if (obj == null) {
         return null;
     } else if (typeof  obj === 'object') {
-        delete obj.$$hashKey;
+        app.removeProp(obj, '$$hashKey');
         return JSON.stringify(obj);
     } else {
         return obj.toString();
