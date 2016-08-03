@@ -172,7 +172,6 @@ app.controller('drillListController', function ($scope, $location, drillsService
     $scope.raw = function() {
         $location.path('/rawdata');
     };
-    $scope.load();
 
 });
 
